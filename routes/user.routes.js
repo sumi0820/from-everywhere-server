@@ -29,7 +29,6 @@ router.patch("/user/:userId/user-edit", (req, res) => {
     $set: { username: username, email: email, bio: bio, location: location },
   })
     .then((user) => {
-      console.log("Successfully updated");
       res.status(200).json(user);
     })
     .catch((err) => {
@@ -52,6 +51,48 @@ router.post("/user/:userId/item-create", (req, res) => {
     image,
     user: loggedInUser,
   })
+    .then((response) => {
+      res.status(200).json(response);
+    })
+    .catch((err) => {
+      res.status(500).json({
+        error: "Something went wrong",
+        message: err,
+      });
+    });
+});
+
+//====Edit user item====//
+router.patch("/user/:userId/item-edit/:itemId", (req, res) => {
+  let itemId = req.params.itemId;
+  const { name, description, condition, image } = req.body;
+
+  ItemModel.findByIdAndUpdate(itemId, {
+    $set: {
+      name: name,
+      description: description,
+      condition: condition,
+      image: image,
+    },
+  })
+    .then((item) => {
+      console.log("Success");
+      res.status(200).json(item);
+    })
+    .catch((err) => {
+      console.log(err);
+
+      res.status(500).json({
+        error: "Something went wrong",
+        message: err,
+      });
+    });
+});
+
+//====Delete user item====//
+router.delete("/user/:userId/item-delete/:itemId", (req, res) => {
+  let itemId = req.params.itemId;
+  ItemModel.findByIdAndDelete(itemId)
     .then((response) => {
       res.status(200).json(response);
     })
