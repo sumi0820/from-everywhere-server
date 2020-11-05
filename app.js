@@ -79,8 +79,13 @@ app.use("/api", authRoutes);
 const userRoutes = require("./routes/user.routes");
 app.use("/api", userRoutes);
 
+const itemRoutes = require("./routes/item.routes");
+app.use("/api", itemRoutes);
+
+
+
+// If no routes match, send them the React HTML.
 app.use((req, res, next) => {
-  // If no routes match, send them the React HTML.
   res.sendFile(__dirname + "/public/index.html");
 });
 
