@@ -27,10 +27,10 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "item",
     },
-
-    // message: [{
-    //   type: ,
-    // }],
+    messages: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "message",
+    }],
   },
   // {
   //   timestamps: true,

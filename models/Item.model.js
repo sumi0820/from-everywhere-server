@@ -19,11 +19,15 @@ const itemSchema = new mongoose.Schema({
     required: true,
 
   },
+  accepted: {
+    type: Boolean,
+    default: false,
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
   },
-
+  
   // message: [{
   //   type: ,
   // }],

@@ -5,10 +5,9 @@ const cookieParser = require("cookie-parser");
 const express = require("express");
 const logger = require("morgan");
 const path = require("path");
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
+const session = require("express-session");
+const MongoStore = require("connect-mongo")(session);
 const mongoose = require("mongoose");
-
 
 const app_name = require("./package.json").name;
 const debug = require("debug")(
@@ -17,17 +16,13 @@ const debug = require("debug")(
 
 require("./config/db.config");
 
-
 const app = express();
-
-
 
 // Middleware Setup
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-
 
 app.use(
   require("node-sass-middleware")({
@@ -54,19 +49,18 @@ app.use(
 );
 
 //A library that helps us log the requests in the console
-app.use(logger('dev'));
+app.use(logger("dev"));
 
-const cors = require('cors')
-app.use(cors({
-  credentials: true, 
-  origin: ['http://localhost:3000']
-}))
-
-
+const cors = require("cors");
+app.use(
+  cors({
+    credentials: true,
+    origin: ["http://localhost:3000"],
+  })
+);
 
 app.use(express.static(path.join(__dirname, "public")));
 // app.use(favicon(path.join(__dirname, "public", "images", "favicon.ico")));
-
 
 // default value for title local
 app.locals.title = "Express - Generated with IronGenerator";
@@ -82,6 +76,8 @@ app.use("/api", userRoutes);
 const itemRoutes = require("./routes/item.routes");
 app.use("/api", itemRoutes);
 
+const messageRoutes = require('./routes/message.routes')
+app.use('/api', messageRoutes);
 
 
 // If no routes match, send them the React HTML.
