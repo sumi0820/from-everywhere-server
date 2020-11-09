@@ -69,6 +69,46 @@ router.post("/signup", (req, res) => {
   });
 });
 
+//====Sign up validation====//
+router.post("/input-check/user", (req, res) => {
+  let userInput = req.body;
+
+  UserModel.find()
+    .then((users) => {
+      let checker = users.filter((user) => {
+        return user.username.toLowerCase() == userInput.username;
+      });
+      console.log(checker.length);
+      return checker.length ? res.status(200).json("isUser") : null;
+    })
+    .catch(() => {
+      res.status(500).json({
+        error: "Something went wrong",
+      });
+      return;
+    });
+});
+
+//====Sign up validation====//
+router.post("/input-check/email", (req, res) => {
+  let userInput = req.body;
+  console.log(userInput);
+  UserModel.find()
+    .then((users) => {
+      let checker = users.filter((user) => {
+        return user.email.toLowerCase() == userInput.email;
+      });
+      console.log(checker.length);
+      return checker.length ? res.status(200).json("isEmail") : null;
+    })
+    .catch(() => {
+      res.status(500).json({
+        error: "Something went wrong",
+      });
+      return;
+    });
+});
+
 //====Sign in====//
 router.post("/signin", (req, res) => {
   const { email, password } = req.body;
@@ -90,6 +130,7 @@ router.post("/signin", (req, res) => {
 
   // Find if the user exists in the database
   UserModel.findOne({ email })
+    .populate("item")
     .then((userData) => {
       //check if passwords match
       bcrypt
@@ -129,12 +170,12 @@ router.post("/signin", (req, res) => {
 });
 
 //====Logout====//
-router.post('/logout', (req, res) => {
+router.post("/logout", (req, res) => {
   req.session.destroy();
   res
-  .status(204) //  No Content
-  .send();
-})
+    .status(204) //  No Content
+    .send();
+});
 
 //====Session check====//
 router.get("/user", isLoggedIn, (req, res, next) => {

@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-
 const userSchema = new mongoose.Schema(
   {
     username: {
@@ -26,12 +25,19 @@ const userSchema = new mongoose.Schema(
     item: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "item",
+      default: undefined,
     },
-    messages: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "message",
-    }],
-  },
+    messages: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "message",
+      },
+    ],
+    accepted: {
+      type: Boolean,
+      default: false,
+    },
+  }
   // {
   //   timestamps: true,
   // }
