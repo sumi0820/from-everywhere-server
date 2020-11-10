@@ -170,29 +170,13 @@ router.post("/signin", (req, res) => {
 });
 //====Sign in Test Mode====//
 router.post("/signin-test", (req, res) => {
-  // if (!email || !password) {
-  //   res.status(500).json({
-  //     error: "Please enter Username. email and password",
-  //   });
-  //   return;
-  // }
-  // const myRegex = new RegExp(
-  //   /^[a-z0-9](?!.*?[^\na-z0-9]{2})[^\s@]+@[^\s@]+\.[^\s@]+[a-z0-9]$/
-  // );
-  // if (!myRegex.test(email)) {
-  //   res.status(500).json({
-  //     error: "Email format not correct",
-  //   });
-  //   return;
-  // }
-
   // Find if the user exists in the database
-  UserModel.findOne({ 'email':'manish@gmail.com' })
+  UserModel.findOne({ email: "manish@gmail.com" })
     .populate("item")
     .then((userData) => {
       //check if passwords match
       bcrypt
-        .compare('Test@12345', userData.password)
+        .compare("Test@12345", userData.password)
         .then((doesItMatch) => {
           //if it matches
           if (doesItMatch) {

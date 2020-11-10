@@ -24,23 +24,30 @@ router.get("/user/:userId", (req, res) => {
 //====Edit user info====//
 router.patch("/user-edit", (req, res) => {
   let loggedInUser = req.session.loggedInUser;
-  const { bio, location, image } = req.body;
-  UserModel.findByIdAndUpdate(loggedInUser, {
-    $set: {
-      bio: bio,
-      location: location,
-      image: image,
-    },
-  })
-    .then((user) => {
-      res.status(200).json(user);
+  const { bio, location, imageProfile, imageBg, username, email } = req.body;
+
+  UserModel.findById(loggedInUser).then(user=>{
+    UserModel.findByIdAndUpdate(loggedInUser, {
+      $set: {
+        username: username,
+        email: email,
+        bio: bio,
+        location: location,
+        imageProfile: imageProfile==null ? user.imageProfile : imageProfile,
+        imageBg:imageBg == null? user.imageBg : imageBg
+      },
     })
-    .catch((err) => {
-      res.status(500).json({
-        error: "Something went wrong",
-        message: err,
+      .then((user) => {
+        res.status(200).json(user);
+      })
+      .catch((err) => {
+        res.status(500).json({
+          error: "Something went wrong",
+          message: err,
+        });
       });
-    });
+  })
+
 });
 
 //====Edit validation====//
@@ -130,26 +137,27 @@ router.patch("/item-edit", (req, res) => {
   let itemId = req.session.loggedInUser.item;
   const { name, description, condition, image } = req.body;
 
-  ItemModel.findByIdAndUpdate(itemId, {
-    $set: {
-      name: name,
-      description: description,
-      condition: condition,
-      image: image,
-    },
-  })
-    .then(() => {
-      ItemModel.find().then((items) => {
-        res.status(200).json(items);
-      });
+  ItemModel.findById(itemId).then(item=>{
+    ItemModel.findByIdAndUpdate(itemId, {
+      $set: {
+        name: name,
+        description: description,
+        condition: condition,
+        image: image==null ? item.image : image,
+      },
     })
-    .catch((err) => {
-      res.status(500).json({
-        error: "Something went wrong",
-        message: err,
+      .then(() => {
+        ItemModel.find().then((items) => {
+          res.status(200).json(items);
+        });
+      })
+      .catch((err) => {
+        res.status(500).json({
+          error: "Something went wrong",
+          message: err,
+        });
       });
-    });
-});
+})});
 
 //====Delete user item====//
 router.delete("/item-delete/:itemId", (req, res) => {
