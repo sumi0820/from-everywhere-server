@@ -76,14 +76,15 @@ app.use("/api", userRoutes);
 const itemRoutes = require("./routes/item.routes");
 app.use("/api", itemRoutes);
 
-const messageRoutes = require('./routes/message.routes')
-app.use('/api', messageRoutes);
+const messageRoutes = require("./routes/message.routes");
+app.use("/api", messageRoutes);
 
+const fileUploads = require("./routes/file-upload.routes");
+app.use("/api", fileUploads);
 
 // If no routes match, send them the React HTML.
 app.use((req, res, next) => {
   res.sendFile(__dirname + "/public/index.html");
 });
-
 
 module.exports = app;
