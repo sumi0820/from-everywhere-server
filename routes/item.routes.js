@@ -5,11 +5,8 @@ const { isLoggedIn } = require("../helpers/auth-helper");
 const UserModel = require("../models/User.model");
 const ItemModel = require("../models/Item.model");
 
-// const randomNum = (max, min) =>
-//   Math.floor(Math.random() * (max - min + 1) + min);
-
 //====GET all item info====//
-router.get("/items",  isLoggedIn,(req, res) => {
+router.get("/items", isLoggedIn, (req, res) => {
   ItemModel.find()
     .populate("user")
     .then((items) => {
@@ -22,68 +19,6 @@ router.get("/items",  isLoggedIn,(req, res) => {
       });
     });
 });
-
-//====GET randomized items info====//
-// router.get("/items/random", (req, res) => {
-//   ItemModel.find()
-//     .then((items) => {
-//       let randomItems = [];
-//       for (let i = 0; i < 3; i++) {
-//         randomItems.push(items[randomNum(items.length - 1, 0)]);
-//       }
-//   res.status(200).json(randomItems);
-// })
-// .catch((err) => {
-//   res.status(500).json({
-//     error: "Something went wrong",
-//     message: err,
-//   });
-// });
-// });
-
-//====GET latest items info====//
-// router.get("/items/latest", (req, res) => {
-//   ItemModel.find()
-//     .then((items) => {
-//       let sorted = items.sort((a, b) => {
-//         a.updatedAt - b.updatedAt;
-//       });
-//       if (items.length > 7) {
-//         res.status(200).json(sorted.slice(0, 6));
-//       } else {
-//         res.status(200).json(sorted);
-//       }
-//     })
-//     .catch((err) => {
-//       res.status(500).json({
-//         error: "Something went wrong",
-//         message: err,
-//       });
-//     });
-// });
-
-//====GET location based items info====//
-// router.get("/items/location", (req, res) => {
-//   let loggedInUser = req.session.loggedInUser;
-//   ItemModel.find()
-//     .populate("user")
-//     .then((items) => {
-//       let sorted = items.filter((item) => {
-//         return loggedInUser.location == item.user.location;
-//       });
-//       if (items.length > 4) {
-//         res.status(200).json(sorted.slice(0, 4));
-//       } else {
-//         res.status(200).json(sorted);
-//       }
-//     })
-//     .catch((err) => {
-//       res.status(500).json({
-//         error: "Something went wrong",
-//         message: err,
-//       });
-//     });
-// });
 
 //====GET item detail info====//
 router.get("/item/:itemId", isLoggedIn, (req, res) => {
@@ -103,7 +38,8 @@ router.get("/item/:itemId", isLoggedIn, (req, res) => {
 });
 
 //====Search item=====//
-router.get("/item-search",  isLoggedIn,(req, res) => {
+router.get("/item-search",  (req, res) => {
+  console.log("test");
   const userInput = req.query.q;
   console.log(req.query.q);
   ItemModel.find()
@@ -154,7 +90,7 @@ router.post("/item/:userId/accept", isLoggedIn, (req, res) => {
 });
 
 //====Revoke item status====//
-router.post("/item/:userId/revoke",  isLoggedIn,(req, res) => {
+router.post("/item/:userId/revoke", isLoggedIn, (req, res) => {
   let loggedInUser = req.session.loggedInUser;
   let userId = req.params.userId;
 
