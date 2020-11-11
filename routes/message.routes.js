@@ -32,7 +32,7 @@ router.post("/send-hi/:userId", (req, res) => {
             }).then((sender) => {
               ItemModel.findByIdAndUpdate(recipient.item._id, {
                 $push: { hi: loggedInUserId },
-              }).then(item=>{
+              }).then((item) => {
                 res.status(200).json(recipient);
               });
             });
@@ -51,7 +51,7 @@ router.post("/send-hi/:userId", (req, res) => {
 router.post("/send/:userId", (req, res) => {
   // Recipient
   let userId = req.params.userId;
-  
+
   //Sender
   let loggedInUserId = req.session.loggedInUser._id;
 
@@ -107,31 +107,17 @@ router.get("/inbox", (req, res) => {
     .then((user) => {
       let conversation = [];
       let orderedByTime = user.messages
-        .sort((a, b) => a.createdAt - b.createdAt)
+        .sort((a, b) => b.createdAt - a.createdAt)
         .filter((chat) => {
-          console.log("in filter:", chat.from._id, "vs", loggedInUserId);
           return chat.from._id != loggedInUserId;
         });
-      console.log("this is original", orderedByTime);
+      let uniqueUserIds = [];
       orderedByTime.forEach((chat) => {
-        if (!conversation.length) {
-          conversation.push(chat);
-        } else {
-          conversation.forEach((val) => {
-            if (chat.from._id != val.from._id) {
-              console.log(
-                "this is from original:",
-                chat.from._id,
-                "vs",
-                "this is from new:",
-                val.from._id
-              );
-              conversation.push(chat);
-            }
-          });
-        }
+        if (!conversation.length || !uniqueUserIds.includes(chat.from._id)) {
+            conversation.push(chat);
+            uniqueUserIds.push(chat.from._id);
+          }     
       });
-      console.log(conversation.length, "vs", orderedByTime.length);
       res.status(200).json(conversation);
     })
     .catch((err) => {
