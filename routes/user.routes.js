@@ -6,7 +6,7 @@ const UserModel = require("../models/User.model");
 const ItemModel = require("../models/Item.model");
 
 //====GET user info====//
-router.get("/user/:userId", (req, res) => {
+router.get("/user/:userId", isLoggedIn, (req, res) => {
   let userId = req.params.userId;
   UserModel.findById(userId)
     .populate("item")
@@ -22,20 +22,20 @@ router.get("/user/:userId", (req, res) => {
 });
 
 //====Edit user info====//
-router.patch("/user-edit", (req, res) => {
+router.patch("/user-edit", isLoggedIn, (req, res) => {
   let loggedInUser = req.session.loggedInUser;
   const { bio, location, imageProfile, imageBg, username, email } = req.body;
   console.log(imageBg, imageProfile);
 
-  UserModel.findById(loggedInUser).then(user=>{
+  UserModel.findById(loggedInUser).then((user) => {
     UserModel.findByIdAndUpdate(loggedInUser, {
       $set: {
         username: username,
         email: email,
         bio: bio,
         location: location,
-        imageProfile: imageProfile==null ? user.imageProfile : imageProfile,
-        imageBg:imageBg == null? user.imageBg : imageBg
+        imageProfile: imageProfile == null ? user.imageProfile : imageProfile,
+        imageBg: imageBg == null ? user.imageBg : imageBg,
       },
     })
       .then((user) => {
@@ -47,8 +47,7 @@ router.patch("/user-edit", (req, res) => {
           message: err,
         });
       });
-  })
-
+  });
 });
 
 //====Edit validation====//
@@ -97,7 +96,7 @@ router.post("/input-check/edit-email", (req, res) => {
 });
 
 //====Create user item====//
-router.post("/item-create", (req, res) => {
+router.post("/item-create", isLoggedIn, (req, res) => {
   let loggedInUser = req.session.loggedInUser;
 
   const { name, description, condition, image } = req.body;
@@ -134,17 +133,17 @@ router.post("/item-create", (req, res) => {
 });
 
 //====Edit user item====//
-router.patch("/item-edit", (req, res) => {
+router.patch("/item-edit", isLoggedIn, (req, res) => {
   let itemId = req.session.loggedInUser.item;
   const { name, description, condition, image } = req.body;
-console.log(image);
-  ItemModel.findById(itemId).then(item=>{
+  console.log(image);
+  ItemModel.findById(itemId).then((item) => {
     ItemModel.findByIdAndUpdate(itemId, {
       $set: {
         name: name,
         description: description,
         condition: condition,
-        image: image==null ? item.image : image,
+        image: image == null ? item.image : image,
       },
     })
       .then(() => {
@@ -158,10 +157,11 @@ console.log(image);
           message: err,
         });
       });
-})});
+  });
+});
 
 //====Delete user item====//
-router.delete("/item-delete/:itemId", (req, res) => {
+router.delete("/item-delete/:itemId", isLoggedIn, (req, res) => {
   let loggedInUser = req.session.loggedInUser;
   let itemId = req.params.itemId;
   console.log("This is after item delete");
@@ -189,7 +189,7 @@ router.delete("/item-delete/:itemId", (req, res) => {
 });
 
 //====Update user item====//
-router.post("/user/:userId/update-status", (req, res) => {
+router.post("/user/:userId/update-status", isLoggedIn, (req, res) => {
   let userId = req.params.userId;
   console.log(userId);
 
@@ -215,4 +215,3 @@ router.post("/user/:userId/update-status", (req, res) => {
 });
 
 module.exports = router;
-

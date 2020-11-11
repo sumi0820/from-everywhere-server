@@ -7,7 +7,7 @@ const ItemModel = require("../models/Item.model");
 const MessageModel = require("../models/Message.model");
 
 //====POST send Hi====//
-router.post("/send-hi/:userId", (req, res) => {
+router.post("/send-hi/:userId",  isLoggedIn,(req, res) => {
   // Recipient
   let userId = req.params.userId;
 
@@ -48,7 +48,7 @@ router.post("/send-hi/:userId", (req, res) => {
 });
 
 //====POST send message====//
-router.post("/send/:userId", (req, res) => {
+router.post("/send/:userId",  isLoggedIn,(req, res) => {
   // Recipient
   let userId = req.params.userId;
 
@@ -94,7 +94,7 @@ router.post("/send/:userId", (req, res) => {
 });
 
 //====GET all messages====//
-router.get("/inbox", (req, res) => {
+router.get("/inbox", isLoggedIn, (req, res) => {
   let loggedInUserId = req.session.loggedInUser._id;
   UserModel.findById(loggedInUserId)
     .populate("messages")
@@ -129,7 +129,7 @@ router.get("/inbox", (req, res) => {
 });
 
 //====GET single chat====//
-router.get("/chat/:userId", (req, res) => {
+router.get("/chat/:userId",  isLoggedIn,(req, res) => {
   let loggedInUserId = req.session.loggedInUser._id;
   let userId = req.params.userId;
   MessageModel.find()

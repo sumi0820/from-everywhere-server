@@ -9,7 +9,7 @@ const ItemModel = require("../models/Item.model");
 //   Math.floor(Math.random() * (max - min + 1) + min);
 
 //====GET all item info====//
-router.get("/items", (req, res) => {
+router.get("/items",  isLoggedIn,(req, res) => {
   ItemModel.find()
     .populate("user")
     .then((items) => {
@@ -86,7 +86,7 @@ router.get("/items", (req, res) => {
 // });
 
 //====GET item detail info====//
-router.get("/item/:itemId", (req, res) => {
+router.get("/item/:itemId", isLoggedIn, (req, res) => {
   let itemId = req.params.itemId;
   ItemModel.findById(itemId)
     .populate("user")
@@ -103,7 +103,7 @@ router.get("/item/:itemId", (req, res) => {
 });
 
 //====Search item=====//
-router.get("/item-search", (req, res) => {
+router.get("/item-search",  isLoggedIn,(req, res) => {
   const userInput = req.query.q;
   console.log(req.query.q);
   ItemModel.find()
@@ -122,7 +122,7 @@ router.get("/item-search", (req, res) => {
 });
 
 //====Update item status=====//
-router.post("/item/:userId/accept", (req, res) => {
+router.post("/item/:userId/accept", isLoggedIn, (req, res) => {
   let loggedInUser = req.session.loggedInUser;
   let userId = req.params.userId;
 
@@ -154,7 +154,7 @@ router.post("/item/:userId/accept", (req, res) => {
 });
 
 //====Revoke item status====//
-router.post("/item/:userId/revoke", (req, res) => {
+router.post("/item/:userId/revoke",  isLoggedIn,(req, res) => {
   let loggedInUser = req.session.loggedInUser;
   let userId = req.params.userId;
 
