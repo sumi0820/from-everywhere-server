@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
+let MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ReactTodos'
 
 mongoose
-  .connect("mongodb://localhost/from-everywhere-server", {
+  .connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
