@@ -213,6 +213,7 @@ router.post("/signin-test", (req, res) => {
 
 //====Logout====//
 router.post("/logout", (req, res) => {
+  console.log('logout');
   req.session.destroy();
   res
     .status(204) //  No Content
