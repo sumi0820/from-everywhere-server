@@ -49,10 +49,9 @@ router.post("/send-hi/:userId", (req, res) => {
 
 //====POST send message====//
 router.post("/send/:userId", (req, res) => {
-  console.log("Received request");
   // Recipient
   let userId = req.params.userId;
-
+  
   //Sender
   let loggedInUserId = req.session.loggedInUser._id;
 
@@ -71,6 +70,7 @@ router.post("/send/:userId", (req, res) => {
             .populate("from")
             .populate("to")
             .then((messages) => {
+              console.log(messages);
               let chat = messages.filter((message) => {
                 return (
                   (message.from._id == loggedInUserId &&
@@ -79,6 +79,7 @@ router.post("/send/:userId", (req, res) => {
                     message.to._id == loggedInUserId)
                 );
               });
+              console.log(chat.length);
               res.status(200).json(chat);
             });
         });

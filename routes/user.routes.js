@@ -25,6 +25,7 @@ router.get("/user/:userId", (req, res) => {
 router.patch("/user-edit", (req, res) => {
   let loggedInUser = req.session.loggedInUser;
   const { bio, location, imageProfile, imageBg, username, email } = req.body;
+  console.log(imageBg, imageProfile);
 
   UserModel.findById(loggedInUser).then(user=>{
     UserModel.findByIdAndUpdate(loggedInUser, {
@@ -136,7 +137,7 @@ router.post("/item-create", (req, res) => {
 router.patch("/item-edit", (req, res) => {
   let itemId = req.session.loggedInUser.item;
   const { name, description, condition, image } = req.body;
-
+console.log(image);
   ItemModel.findById(itemId).then(item=>{
     ItemModel.findByIdAndUpdate(itemId, {
       $set: {
@@ -214,3 +215,4 @@ router.post("/user/:userId/update-status", (req, res) => {
 });
 
 module.exports = router;
+
