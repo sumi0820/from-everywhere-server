@@ -21,7 +21,7 @@ router.get("/items", isLoggedIn, (req, res) => {
 });
 
 //====GET item detail info====//
-router.get("/item/:itemId", isLoggedIn, (req, res) => {
+router.get("/item/:itemId",  (req, res) => {
   let itemId = req.params.itemId;
   ItemModel.findById(itemId)
     .populate("user")
@@ -66,14 +66,14 @@ router.post("/item/:userId/accept", isLoggedIn, (req, res) => {
   UserModel.findById(loggedInUser._id).then((user) => {
     ItemModel.findByIdAndUpdate(user.item, {
       $set: {
-        accepted: true,
+        accepted: userId,
       },
     })
       .then((item) => {
         UserModel.findById(userId).then((otherUser) => {
           ItemModel.findByIdAndUpdate(otherUser.item, {
             $set: {
-              accepted: true,
+              accepted: loggedInUser._id,
             },
           }).then((otherItem) => {
             res.status(200).json(item);
@@ -98,14 +98,14 @@ router.post("/item/:userId/revoke", isLoggedIn, (req, res) => {
   UserModel.findById(loggedInUser._id).then((user) => {
     ItemModel.findByIdAndUpdate(user.item, {
       $set: {
-        accepted: false,
+        accepted: null,
       },
     })
       .then((item) => {
         UserModel.findById(userId).then((otherUser) => {
           ItemModel.findByIdAndUpdate(otherUser.item, {
             $set: {
-              accepted: false,
+              accepted: null,
             },
           }).then((otherItem) => {
             res.status(200).json(item);

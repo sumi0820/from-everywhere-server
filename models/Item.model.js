@@ -20,8 +20,8 @@ const itemSchema = new mongoose.Schema(
       required: true,
     },
     accepted: {
-      type: Boolean,
-      default: false,
+      type: String,
+      default: null,
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,

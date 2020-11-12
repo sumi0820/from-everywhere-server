@@ -4,9 +4,10 @@ const router = express.Router();
 const { isLoggedIn } = require("../helpers/auth-helper");
 const UserModel = require("../models/User.model");
 const ItemModel = require("../models/Item.model");
+const FeedbackModel = require("../models/Feedback.model");
 
 //====GET user info====//
-router.get("/user/:userId", isLoggedIn, (req, res) => {
+router.get("/user/:userId", (req, res) => {
   let userId = req.params.userId;
   UserModel.findById(userId)
     .populate("item")
@@ -191,13 +192,11 @@ router.delete("/item-delete/:itemId", isLoggedIn, (req, res) => {
 //====Update user item====//
 router.post("/user/:userId/update-status", isLoggedIn, (req, res) => {
   let userId = req.params.userId;
-  console.log(userId);
 
-  // Update Item accepted status
   UserModel.findById(userId).then((user) => {
     ItemModel.findByIdAndUpdate(user.item, {
       $set: {
-        accepted: false,
+        accepted: null,
         hi: [],
       },
     })
@@ -212,6 +211,53 @@ router.post("/user/:userId/update-status", isLoggedIn, (req, res) => {
         });
       });
   });
+});
+
+//=====Create Feedback=====//
+router.post("/user/:userId/create-feedback", isLoggedIn, (req, res) => {
+  const { feedback, rate } = req.body;
+  let userId = req.params.userId;
+  UserModel.findById(userId)
+    .populate("item")
+    .then((user) => {
+      FeedbackModel.create({
+        feedback: feedback,
+        rate: rate,
+        to: user.item.accepted,
+        from: userId,
+      })
+        .then((feedback) => {
+          console.log(feedback);
+          res.status(200).json(feedback);
+        })
+        .catch((err) => {
+          res.status(500).json({
+            error: "Something went wrong",
+            message: err,
+          });
+        });
+    });
+});
+
+//====GET Feedback====//
+router.get("/feedback/:userId", (req, res) => {
+  let userId = req.params.userId;
+
+  FeedbackModel.find()
+    .populate("from")
+    .then((feedbacks) => {
+      let filtered = feedbacks.filter((feedback) => {
+        return feedback.to._id == userId;
+      });
+      console.log("this is feedback", filtered);
+      res.status(200).json(filtered);
+    })
+    .catch((err) => {
+      res.status(500).json({
+        error: "Something went wrong",
+        message: err,
+      });
+    });
 });
 
 module.exports = router;
