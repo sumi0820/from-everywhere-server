@@ -11,6 +11,7 @@ router.get("/user/:userId", (req, res) => {
   let userId = req.params.userId;
   UserModel.findById(userId)
     .populate("item")
+    .populate('feedback')
     .then((user) => {
       res.status(200).json(user);
     })
@@ -217,6 +218,7 @@ router.post("/user/:userId/update-status", isLoggedIn, (req, res) => {
 router.post("/user/:userId/create-feedback", isLoggedIn, (req, res) => {
   const { feedback, rate } = req.body;
   let userId = req.params.userId;
+
   UserModel.findById(userId)
     .populate("item")
     .then((user) => {
@@ -227,8 +229,11 @@ router.post("/user/:userId/create-feedback", isLoggedIn, (req, res) => {
         from: userId,
       })
         .then((feedback) => {
-          console.log(feedback);
-          res.status(200).json(feedback);
+          UserModel.findByIdAndUpdate(user.item.accepted, {
+            $push: { feedback: feedback },
+          }).then(() => {
+            res.status(200).json(feedback);
+          });
         })
         .catch((err) => {
           res.status(500).json({
@@ -239,18 +244,19 @@ router.post("/user/:userId/create-feedback", isLoggedIn, (req, res) => {
     });
 });
 
-//====GET Feedback====//
-router.get("/feedback/:userId", (req, res) => {
+//====GET Feedback(from!=loggedinUser)====//
+router.get("/feedback", (req, res) => {
   let userId = req.params.userId;
 
   FeedbackModel.find()
     .populate("from")
+    .populate('to')
     .then((feedbacks) => {
-      let filtered = feedbacks.filter((feedback) => {
-        return feedback.to._id == userId;
-      });
-      console.log("this is feedback", filtered);
-      res.status(200).json(filtered);
+      // let filtered = feedbacks.filter((feedback) => {
+      //   return feedback.to._id == userId;
+      // });
+      // console.log("this is feedback", filtered);
+      res.status(200).json(feedbacks);
     })
     .catch((err) => {
       res.status(500).json({

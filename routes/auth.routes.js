@@ -131,6 +131,7 @@ router.post("/signin", (req, res) => {
   // Find if the user exists in the database
   UserModel.findOne({ email })
     .populate("item")
+    .populate('feedback')
     .then((userData) => {
       //check if passwords match
       bcrypt
@@ -173,6 +174,7 @@ router.post("/signin-test", (req, res) => {
   // Find if the user exists in the database
   UserModel.findOne({ email: "manish@gmail.com" })
     .populate("item")
+    .populate('feedback')
     .then((userData) => {
       //check if passwords match
       bcrypt
