@@ -11,7 +11,7 @@ router.get("/user/:userId", (req, res) => {
   let userId = req.params.userId;
   UserModel.findById(userId)
     .populate("item")
-    .populate('feedback')
+    .populate("feedback")
     .then((user) => {
       res.status(200).json(user);
     })
@@ -27,21 +27,20 @@ router.get("/user/:userId", (req, res) => {
 router.patch("/user-edit", isLoggedIn, (req, res) => {
   let loggedInUser = req.session.loggedInUser;
   const { bio, location, imageProfile, imageBg, username, email } = req.body;
-  console.log(imageBg, imageProfile);
 
-  UserModel.findById(loggedInUser).then((user) => {
-    UserModel.findByIdAndUpdate(loggedInUser, {
-      $set: {
-        username: username,
-        email: email,
-        bio: bio,
-        location: location,
-        imageProfile: imageProfile == null ? user.imageProfile : imageProfile,
-        imageBg: imageBg == null ? user.imageBg : imageBg,
-      },
-    })
-      .then((user) => {
-        res.status(200).json(user);
+  UserModel.findByIdAndUpdate(loggedInUser, {
+    $set: {
+      username: username,
+      email: email,
+      bio: bio,
+      location: location,
+      imageProfile: imageProfile == null ? loggedInUser.imageProfile : imageProfile,
+      imageBg: imageBg == null ? loggedInUser.imageBg : imageBg,
+    },
+  }).then((oldUser) => {
+    UserModel.findById(loggedInUser)
+      .then((newUser) => {
+        res.status(200).json(newUser);
       })
       .catch((err) => {
         res.status(500).json({
@@ -138,7 +137,6 @@ router.post("/item-create", isLoggedIn, (req, res) => {
 router.patch("/item-edit", isLoggedIn, (req, res) => {
   let itemId = req.session.loggedInUser.item;
   const { name, description, condition, image } = req.body;
-  console.log(image);
   ItemModel.findById(itemId).then((item) => {
     ItemModel.findByIdAndUpdate(itemId, {
       $set: {
@@ -166,11 +164,9 @@ router.patch("/item-edit", isLoggedIn, (req, res) => {
 router.delete("/item-delete/:itemId", isLoggedIn, (req, res) => {
   let loggedInUser = req.session.loggedInUser;
   let itemId = req.params.itemId;
-  console.log("This is after item delete");
 
   ItemModel.findByIdAndDelete(itemId)
     .then(() => {
-      console.log("This is after item delete");
       UserModel.findByIdAndUpdate(loggedInUser._id, {
         $set: {
           item: [],
@@ -246,16 +242,10 @@ router.post("/user/:userId/create-feedback", isLoggedIn, (req, res) => {
 
 //====GET Feedback(from!=loggedinUser)====//
 router.get("/feedback", (req, res) => {
-  let userId = req.params.userId;
-
   FeedbackModel.find()
     .populate("from")
-    .populate('to')
+    .populate("to")
     .then((feedbacks) => {
-      // let filtered = feedbacks.filter((feedback) => {
-      //   return feedback.to._id == userId;
-      // });
-      // console.log("this is feedback", filtered);
       res.status(200).json(feedbacks);
     })
     .catch((err) => {

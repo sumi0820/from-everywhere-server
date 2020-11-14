@@ -26,7 +26,6 @@ router.get("/item/:itemId",  (req, res) => {
   ItemModel.findById(itemId)
     .populate("user")
     .then((item) => {
-      console.log(item);
       res.status(200).json(item);
     })
     .catch((err) => {
@@ -39,9 +38,7 @@ router.get("/item/:itemId",  (req, res) => {
 
 //====Search item=====//
 router.get("/item-search",  (req, res) => {
-  console.log("test");
   const userInput = req.query.q;
-  console.log(req.query.q);
   ItemModel.find()
     .then((items) => {
       const filteredItems = items.filter((item) => {

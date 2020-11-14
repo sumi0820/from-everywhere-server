@@ -8,7 +8,6 @@ const UserModel = require("../models/User.model");
 //====Sign up====//
 router.post("/signup", (req, res) => {
   const { username, email, password } = req.body;
-  console.log(username, email, password);
 
   if (!username || !email || !password) {
     res.status(500).json({
@@ -78,7 +77,6 @@ router.post("/input-check/user", (req, res) => {
       let checker = users.filter((user) => {
         return user.username.toLowerCase() == userInput.username;
       });
-      console.log(checker.length);
       return checker.length ? res.status(200).json("isUser") : null;
     })
     .catch(() => {
@@ -92,13 +90,11 @@ router.post("/input-check/user", (req, res) => {
 //====Sign up validation====//
 router.post("/input-check/email", (req, res) => {
   let userInput = req.body;
-  console.log(userInput);
   UserModel.find()
     .then((users) => {
       let checker = users.filter((user) => {
         return user.email.toLowerCase() == userInput.email;
       });
-      console.log(checker.length);
       return checker.length ? res.status(200).json("isEmail") : null;
     })
     .catch(() => {
@@ -169,6 +165,7 @@ router.post("/signin", (req, res) => {
       return;
     });
 });
+
 //====Sign in Test Mode====//
 router.post("/signin-test", (req, res) => {
   // Find if the user exists in the database
